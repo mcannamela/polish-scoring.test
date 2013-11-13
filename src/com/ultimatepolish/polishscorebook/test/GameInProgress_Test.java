@@ -26,8 +26,8 @@ public class GameInProgress_Test extends
 		setActivityInitialTouchMode(false);
 
 		Intent intent = new Intent();
-		Long gId = (long) 1;
-		intent.putExtra("GID", gId);
+		// Long gId = (long) 1;
+		// intent.putExtra("GID", gId);
 
 		setActivityIntent(intent);
 		mActivity = getActivity();
