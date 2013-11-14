@@ -1,19 +1,31 @@
 package com.ultimatepolish.polishscorebook.test;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.test.ActivityInstrumentationTestCase2;
-import android.widget.ImageButton;
+import android.test.TouchUtils;
+import android.view.View;
 import android.widget.NumberPicker;
 
 import com.ultimatepolish.polishscorebook.GameInProgress;
+import com.ultimatepolish.scorebookdb.ActiveGame;
+import com.ultimatepolish.scorebookdb.DeadType;
 
 public class GameInProgress_Test extends
 		ActivityInstrumentationTestCase2<GameInProgress> {
 	private GameInProgress mActivity;
+	private ActiveGame ag;
 	private NumberPicker mPicker;
-	private ImageButton btnHigh;
+	private View btnHigh;
+	private View btnHighWide;
+	private View btnRight;
+	private View btnRightWide;
+	private View btnLow;
+	private View btnLowWide;
+	private View btnLeft;
+	private View btnLeftWide;
 
-	public static final int ADAPTER_COUNT = 9;
 	public static final int INITIAL_POSITION = 0;
 
 	public GameInProgress_Test() {
@@ -34,8 +46,24 @@ public class GameInProgress_Test extends
 
 		mPicker = (NumberPicker) mActivity
 				.findViewById(com.ultimatepolish.polishscorebook.R.id.numPicker_catch);
-		btnHigh = (ImageButton) mActivity
+		ag = mActivity.ag;
+
+		btnHigh = mActivity
 				.findViewById(com.ultimatepolish.polishscorebook.R.id.gip_button_high);
+		btnHighWide = mActivity
+				.findViewById(com.ultimatepolish.polishscorebook.R.id.gip_dead_high);
+		btnRight = mActivity
+				.findViewById(com.ultimatepolish.polishscorebook.R.id.gip_button_right);
+		btnRightWide = mActivity
+				.findViewById(com.ultimatepolish.polishscorebook.R.id.gip_dead_right);
+		btnLow = mActivity
+				.findViewById(com.ultimatepolish.polishscorebook.R.id.gip_button_low);
+		btnLowWide = mActivity
+				.findViewById(com.ultimatepolish.polishscorebook.R.id.gip_dead_low);
+		btnLeft = mActivity
+				.findViewById(com.ultimatepolish.polishscorebook.R.id.gip_button_left);
+		btnLeftWide = mActivity
+				.findViewById(com.ultimatepolish.polishscorebook.R.id.gip_dead_left);
 
 	}
 
@@ -43,14 +71,33 @@ public class GameInProgress_Test extends
 		assertTrue(mPicker.getValue() == 1);
 	}
 
-	public void testHighThrow() {
+	public void testWideThrows() {
+		int activeColor = Color.RED;
+		int inactiveColor = Color.LTGRAY;
 
-		mActivity.runOnUiThread(new Runnable() {
-			public void run() {
-				btnHigh.performLongClick();
-				btnHigh.performClick();
-			}
-		});
+		assertEquals(inactiveColor, getButtonColor(btnHighWide));
+		TouchUtils.longClickView(this, btnHigh);
+		assertEquals(activeColor, getButtonColor(btnHighWide));
+		TouchUtils.clickView(this, btnHigh);
+		assertEquals(DeadType.HIGH, ag.getThrow(0).getDeadType());
+
+		TouchUtils.longClickView(this, btnRight);
+		assertEquals(activeColor, getButtonColor(btnRightWide));
+		TouchUtils.clickView(this, btnRight);
+		assertEquals(DeadType.RIGHT, ag.getThrow(1).getDeadType());
+
+		TouchUtils.longClickView(this, btnLow);
+		assertEquals(activeColor, getButtonColor(btnLowWide));
+		TouchUtils.clickView(this, btnLow);
+		assertEquals(DeadType.LOW, ag.getThrow(2).getDeadType());
+
+		TouchUtils.longClickView(this, btnLeft);
+		assertEquals(activeColor, getButtonColor(btnLeftWide));
+		TouchUtils.clickView(this, btnLeft);
+		assertEquals(DeadType.LEFT, ag.getThrow(3).getDeadType());
+	}
+
+	public void testFire() {
 
 	}
 
@@ -63,7 +110,11 @@ public class GameInProgress_Test extends
 		// }
 		// });
 
-		mPicker.performLongClick();
+		// mPicker.performLongClick();
 
+	}
+
+	public int getButtonColor(View view) {
+		return ((ColorDrawable) view.getBackground()).getColor();
 	}
 }
