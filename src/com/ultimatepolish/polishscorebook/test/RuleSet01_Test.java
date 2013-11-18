@@ -105,20 +105,41 @@ public class RuleSet01_Test extends
 	}
 
 	public void testPreconditions() {
+		assertEquals("Wrong ruleset", 1, ag.ruleSet.getId());
 		assertTrue(mPicker.getValue() == 1);
 	}
 
 	public void testFire() {
-		TouchUtils.clickView(this, btnPole);
-		TouchUtils.clickView(this, btnStrike);
-		TouchUtils.clickView(this, btnPole);
-		TouchUtils.clickView(this, btnStrike);
-		TouchUtils.clickView(this, btnPole);
-		TouchUtils.clickView(this, btnStrike);
-		TouchUtils.clickView(this, btnPole);
-		TouchUtils.clickView(this, btnStrike);
+		// remember that fire counts are initial counts
+		TouchUtils.clickView(this, btnPole); // id 0
+		checkFireCounts(0, 0, 0, "");
 
-		assertEquals(ThrowResult.NA, ag.getThrow(6).throwResult);
+		TouchUtils.clickView(this, btnStrike); // id 1
+		checkFireCounts(1, 1, 0, "");
+
+		TouchUtils.clickView(this, btnPole); // id 2
+		checkFireCounts(2, 1, 0, "");
+
+		TouchUtils.clickView(this, btnStrike); // id 3
+		checkFireCounts(3, 2, 0, "");
+
+		TouchUtils.clickView(this, btnPole); // id 4
+		checkFireCounts(4, 2, 0, "");
+
+		TouchUtils.clickView(this, btnRight); // id 5
+		checkFireCounts(5, 3, 0, "");
+		checkThrow(5, ThrowType.FIRED_ON, ThrowResult.NA, DeadType.ALIVE, "");
+
+		TouchUtils.clickView(this, btnPole); // id 6
+		checkFireCounts(6, 3, 0, "");
+		checkThrow(6, ThrowType.POLE, ThrowResult.NA, DeadType.ALIVE, "");
+		checkInitScore(6, 0, 0, "");
+
+		TouchUtils.clickView(this, btnStrike); // id 7
+		checkFireCounts(7, 4, 0, "");
+		checkThrow(7, ThrowType.FIRED_ON, ThrowResult.NA, DeadType.ALIVE, "");
+		checkInitScore(7, 2, 0, "");
+
 	}
 
 	public void testWideThrows() {
@@ -174,22 +195,52 @@ public class RuleSet01_Test extends
 
 	public void checkThrow(int throwIdx, int expThrowType, int expThrowResult,
 			int expDeadType, String errMsg) {
-		assertEquals(errMsg + ", wrong throwType", expThrowType,
-				ag.getThrow(throwIdx).throwType);
-		assertEquals(errMsg + ", wrong throwResult", expThrowResult,
-				ag.getThrow(throwIdx).throwResult);
-		assertEquals(errMsg + ", wrong deadType", expDeadType,
-				ag.getThrow(throwIdx).deadType);
+		assertEquals(errMsg + " (" + throwIdx + "), wrong throwType",
+				expThrowType, ag.getThrow(throwIdx).throwType);
+		assertEquals(errMsg + " (" + throwIdx + "), wrong throwResult",
+				expThrowResult, ag.getThrow(throwIdx).throwResult);
+		assertEquals(errMsg + " (" + throwIdx + "), wrong deadType",
+				expDeadType, ag.getThrow(throwIdx).deadType);
 	}
 
 	public void checkThrowSpecial(int throwIdx, String errMsg) {
 		// TODO: add checks for special marks
 	}
 
-	public void checkScore(int throwIdx, int[] expScore, String errMsg) {
-		assertEquals(errMsg + ", wrong offense score", expScore[0],
-				ag.getThrow(throwIdx).initialOffensivePlayerScore);
-		assertEquals(errMsg + ", wrong defense score", expScore[1],
-				ag.getThrow(throwIdx).initialDefensivePlayerScore);
+	public void checkFireCounts(int throwIdx, int expP1Cnt, int expP2Cnt,
+			String errMsg) {
+		int p1Cnt;
+		int p2Cnt;
+		if (throwIdx % 2 == 0) {
+			// P1 is offense for even idx
+			p1Cnt = ag.getThrow(throwIdx).offenseFireCount;
+			p2Cnt = ag.getThrow(throwIdx).defenseFireCount;
+		} else {
+			// P2 is offense for odd idx
+			p1Cnt = ag.getThrow(throwIdx).defenseFireCount;
+			p2Cnt = ag.getThrow(throwIdx).offenseFireCount;
+		}
+		assertEquals(errMsg + "(" + throwIdx + "), wrong P1 fire count",
+				expP1Cnt, p1Cnt);
+		assertEquals(errMsg + "(" + throwIdx + "), wrong P2 fire count",
+				expP2Cnt, p2Cnt);
+	}
+
+	public void checkInitScore(int throwIdx, int expP1Score, int expP2Score,
+			String errMsg) {
+		int p1Score;
+		int p2Score;
+		if (throwIdx % 2 == 0) {
+			// P1 is offense for even idx
+			p1Score = ag.getThrow(throwIdx).initialOffensivePlayerScore;
+			p2Score = ag.getThrow(throwIdx).initialDefensivePlayerScore;
+		} else {
+			p1Score = ag.getThrow(throwIdx).initialDefensivePlayerScore;
+			p2Score = ag.getThrow(throwIdx).initialOffensivePlayerScore;
+		}
+		assertEquals(errMsg + "(" + throwIdx + "), wrong P1 score", expP1Score,
+				p1Score);
+		assertEquals(errMsg + "(" + throwIdx + "), wrong P2 score", expP2Score,
+				p2Score);
 	}
 }
