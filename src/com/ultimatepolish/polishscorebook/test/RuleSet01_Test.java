@@ -18,10 +18,10 @@ import com.ultimatepolish.polishscorebook.GameInProgress;
 import com.ultimatepolish.polishscorebook.ThrowTableFragment;
 import com.ultimatepolish.scorebookdb.ActiveGame;
 import com.ultimatepolish.scorebookdb.enums.DeadType;
-import com.ultimatepolish.scorebookdb.enums.RuleType;
+import com.ultimatepolish.scorebookdb.enums.ThrowResult;
 import com.ultimatepolish.scorebookdb.enums.ThrowType;
 
-public class GameInProgress_Test extends
+public class RuleSet01_Test extends
 		ActivityInstrumentationTestCase2<GameInProgress> {
 	private GameInProgress mActivity;
 	private ActiveGame ag;
@@ -49,7 +49,7 @@ public class GameInProgress_Test extends
 
 	public static final int INITIAL_POSITION = 0;
 
-	public GameInProgress_Test() {
+	public RuleSet01_Test() {
 		super(GameInProgress.class);
 	}
 
@@ -67,9 +67,8 @@ public class GameInProgress_Test extends
 
 		mPicker = (NumberPicker) mActivity
 				.findViewById(com.ultimatepolish.polishscorebook.R.id.numPicker_catch);
+		// mActivity.ag.ruleSet = RuleType.RS01;
 		ag = mActivity.ag;
-		ag.ruleSet = RuleType.RS00; // TODO: will have to make tests for each
-									// ruleset
 
 		btnHigh = (ImageButton) mActivity
 				.findViewById(com.ultimatepolish.polishscorebook.R.id.gip_button_high);
@@ -105,7 +104,7 @@ public class GameInProgress_Test extends
 				.findViewById(com.ultimatepolish.polishscorebook.R.id.viewPager_throwsTables);
 	}
 
-	public void testPreConditions() {
+	public void testPreconditions() {
 		assertTrue(mPicker.getValue() == 1);
 	}
 
@@ -116,7 +115,10 @@ public class GameInProgress_Test extends
 		TouchUtils.clickView(this, btnStrike);
 		TouchUtils.clickView(this, btnPole);
 		TouchUtils.clickView(this, btnStrike);
-		// TODO: need to make some assertions here
+		TouchUtils.clickView(this, btnPole);
+		TouchUtils.clickView(this, btnStrike);
+
+		assertEquals(ThrowResult.NA, ag.getThrow(6).throwResult);
 	}
 
 	public void testWideThrows() {
@@ -168,5 +170,26 @@ public class GameInProgress_Test extends
 
 	public int getButtonColor(View view) {
 		return ((ColorDrawable) view.getBackground()).getColor();
+	}
+
+	public void checkThrow(int throwIdx, int expThrowType, int expThrowResult,
+			int expDeadType, String errMsg) {
+		assertEquals(errMsg + ", wrong throwType", expThrowType,
+				ag.getThrow(throwIdx).throwType);
+		assertEquals(errMsg + ", wrong throwResult", expThrowResult,
+				ag.getThrow(throwIdx).throwResult);
+		assertEquals(errMsg + ", wrong deadType", expDeadType,
+				ag.getThrow(throwIdx).deadType);
+	}
+
+	public void checkThrowSpecial(int throwIdx, String errMsg) {
+		// TODO: add checks for special marks
+	}
+
+	public void checkScore(int throwIdx, int[] expScore, String errMsg) {
+		assertEquals(errMsg + ", wrong offense score", expScore[0],
+				ag.getThrow(throwIdx).initialOffensivePlayerScore);
+		assertEquals(errMsg + ", wrong defense score", expScore[1],
+				ag.getThrow(throwIdx).initialDefensivePlayerScore);
 	}
 }
