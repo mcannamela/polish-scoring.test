@@ -109,21 +109,21 @@ public class RuleSet01_Test extends
 		assertTrue(mPicker.getValue() == 1);
 	}
 
-	public void testFire() {
+	public void testFire_activate01() {
 		// remember that fire counts are initial counts
 		TouchUtils.clickView(this, btnPole); // id 0
 		checkFireCounts(0, 0, 0, "");
 
-		TouchUtils.clickView(this, btnStrike); // id 1
+		TouchUtils.clickView(this, btnLow); // id 1
 		checkFireCounts(1, 1, 0, "");
 
-		TouchUtils.clickView(this, btnPole); // id 2
+		TouchUtils.clickView(this, btnBottle); // id 2
 		checkFireCounts(2, 1, 0, "");
 
 		TouchUtils.clickView(this, btnStrike); // id 3
 		checkFireCounts(3, 2, 0, "");
 
-		TouchUtils.clickView(this, btnPole); // id 4
+		TouchUtils.clickView(this, btnCup); // id 4
 		checkFireCounts(4, 2, 0, "");
 
 		TouchUtils.clickView(this, btnRight); // id 5
@@ -139,7 +139,31 @@ public class RuleSet01_Test extends
 		checkFireCounts(7, 4, 0, "");
 		checkThrow(7, ThrowType.FIRED_ON, ThrowResult.NA, DeadType.ALIVE, "");
 		checkInitScore(7, 2, 0, "");
+	}
 
+	public void testFire_quench01() {
+		// remember that fire counts are initial counts
+		TouchUtils.clickView(this, btnRight); // id 0
+		checkFireCounts(0, 0, 0, "");
+
+		TouchUtils.clickView(this, btnCup); // id 1
+		checkFireCounts(1, 0, 0, "");
+
+		TouchUtils.clickView(this, btnHigh); // id 2
+		checkFireCounts(2, 0, 1, "");
+
+		TouchUtils.clickView(this, btnPole); // id 3
+		checkFireCounts(3, 0, 1, "");
+
+		TouchUtils.dragViewToBottom(this, mActivity, mPicker);
+		TouchUtils.clickView(this, btnPole); // id 4
+		checkFireCounts(4, 0, 2, "");
+
+		TouchUtils.clickView(this, btnCup); // id 5
+		checkFireCounts(5, 1, 0, "");
+
+		TouchUtils.clickView(this, btnPole); // id 6
+		checkFireCounts(6, 1, 1, "");
 	}
 
 	public void testWideThrows() {
