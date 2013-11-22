@@ -18,6 +18,7 @@ import com.ultimatepolish.polishscorebook.GameInProgress;
 import com.ultimatepolish.polishscorebook.ThrowTableFragment;
 import com.ultimatepolish.scorebookdb.ActiveGame;
 import com.ultimatepolish.scorebookdb.enums.DeadType;
+import com.ultimatepolish.scorebookdb.enums.RuleType;
 import com.ultimatepolish.scorebookdb.enums.ThrowResult;
 import com.ultimatepolish.scorebookdb.enums.ThrowType;
 
@@ -61,6 +62,8 @@ public class RuleSet01_Test extends
 		Intent intent = new Intent();
 		// Long gId = (long) 1;
 		// intent.putExtra("GID", gId);
+		int rsId = RuleType.rs01;
+		intent.putExtra("RSID", rsId);
 
 		setActivityIntent(intent);
 		mActivity = getActivity();
